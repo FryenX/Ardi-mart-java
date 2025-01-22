@@ -129,9 +129,11 @@ public final class Input extends javax.swing.JFrame {
     private double originalTotal;
     private String lastInvoice;
     private JDialog paymentDialog;
+
     private void Icon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/image/icon.png")));
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1168,22 +1170,22 @@ public final class Input extends javax.swing.JFrame {
                 escpos.feed(2);
 
                 // Print store header
-                escpos.writeLF(titleStyle, "Ardi-Mart Coffee")
+                escpos.writeLF(titleStyle, "Ardi-Mart")
                         .feed(1);
                 escpos.writeLF(centerStyle, "Jl. Arjuna, No. 24")
                         .writeLF(centerStyle, "Tel: 081-936-070-879")
                         .feed(1);
-                escpos.write(centerStyle, "=".repeat(42))
+                escpos.write(centerStyle, "=".repeat(32))
                         .feed(1);
 
                 // Print invoice details
-                escpos.writeLF(normalStyle, String.format("Invoice : %s", invoice))
-                        .writeLF(normalStyle, String.format("Date   : %s", dateTime))
-                        .writeLF(normalStyle, String.format("Cust ID: %s",
+                escpos.writeLF(String.format("Invoice : %s", invoice))
+                        .writeLF(String.format("Date   : %s", dateTime))
+                        .writeLF(String.format("Cust ID: %s",
                                 (customerId == 0 ? "-" : customerId.toString())))
                         .feed(1);
 
-                escpos.write(centerStyle, "=".repeat(42))
+                escpos.write(centerStyle, "=".repeat(32))
                         .feed(1);
 
                 // Fetch and print transaction details
@@ -1199,14 +1201,17 @@ public final class Input extends javax.swing.JFrame {
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
                             String product = rs.getString("product");
-                            if (product.length() > 20) {
-                                product = product.substring(0, 17) + "...";
+                            if (product.length() > 32) {
+                                product = product.substring(0, 29) + "..."; // Ensure the product name fits in 32 characters
                             }
 
-                            escpos.writeLF(normalStyle, String.format("%-4.1f %-8s %-20s %8.2f %8.2f",
+                            // Print product name on the first line
+                            escpos.writeLF(product);
+
+                            // Print quantity, unit, sell price, and subtotal on the second line
+                            escpos.writeLF(String.format("%-2.1f %-3s X %,8.2f %,12.2f",
                                     rs.getDouble("qty"),
                                     rs.getString("unit"),
-                                    product,
                                     rs.getDouble("sell_price"),
                                     rs.getDouble("sub_total")));
                         }
@@ -1215,14 +1220,14 @@ public final class Input extends javax.swing.JFrame {
 
                 // Print totals section
                 escpos.feed(1)
-                        .write(centerStyle, "=".repeat(42))
+                        .write(centerStyle, "=".repeat(32))
                         .feed(1);
 
                 Style rightStyle = new Style()
                         .setJustification(EscPosConst.Justification.Right);
 
                 escpos.writeLF(rightStyle, String.format("Gross Total  : %,12.2f", grossTotal))
-                        .writeLF(rightStyle, String.format("Discount (%%) : %,12.2f%%", discPercent))
+                        .writeLF(rightStyle, String.format("Discount (%%): %,12.2f%%", discPercent))
                         .writeLF(rightStyle, String.format("Discount (Rp): %,12.2f", discIDR))
                         .writeLF(rightStyle, String.format("Net Total    : %,12.2f", total))
                         .writeLF(rightStyle, String.format("Payment      : %,12.2f", payment))
@@ -1230,7 +1235,7 @@ public final class Input extends javax.swing.JFrame {
 
                 // Print footer
                 escpos.feed(1)
-                        .write(centerStyle, "=".repeat(42))
+                        .write(centerStyle, "=".repeat(32))
                         .feed(1)
                         .writeLF(footerStyle, "Thank You for Your Visit!")
                         .writeLF(footerStyle, "Please Come Again!")
