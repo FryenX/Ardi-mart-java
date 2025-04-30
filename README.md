@@ -34,8 +34,8 @@ Before installing, ensure your system meets the following requirements:
 1. After installation, locate the Ardi-Mart shortcut on your desktop or in the Start menu.
 2. Right-click the shortcut and select **Run as administrator** to ensure all features work properly.
 3. Log in using the default credentials:
-   - **Username**: `admin`
-   - **Password**: `password` (you will be prompted to change this after first login).
+   - **Username**: `ardi2405`
+   - **Password**: `ardi2405`.
 
 ## Usage
 
